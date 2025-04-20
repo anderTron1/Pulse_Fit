@@ -5,10 +5,41 @@
 {% endblock %}
 
 {% block conteudo %}
+<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
 
-<style>
-    body{
-        background-color: #212121;
-    }
-</style>
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="p-3 shadow" style="background-color: #111; border-radius: 10px; width: 100%; max-width: 400px; border: 1px solid #8800ff;">
+            <h4 class="text-center mb-3" style="font-weight: 600; color: #8800ff;">Registrar Plano</h4>
+
+            <form method="POST" class="form-register">
+                {{ form_plano.hidden_tag() }}
+
+                <div class="mb-2">
+                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.plano.label.text }}</label>
+                    {{ form_plano.plano(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.categoria.label.text }}</label>
+                    {{ form_plano.categoria(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.descricao.label.text }}</label>
+                    {{ form_plano.descricao(class="form-control form-control-sm bg-dark text-white border-secondary", rows=2) }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.preco.label.text }}</label>
+                    {{ form_plano.preco(class="form-control form-control-sm bg-dark text-white border-secondary decimal-field") }}
+                </div>
+
+                <div class="d-grid">
+                    {{ form_plano.submit(class="btn btn-sm btn-outline-light") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
 {% endblock %}
