@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Cadastro de Cliente
+{% endblock %}
+
+{% block conteudo %}
+<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+        <form method="POST" class="form-register w-100"
+              style="max-width: 1100px; border: 2px solid #8800ff; border-radius: 12px; background-color: #111; padding: 18px;">
+            {{ form_cliente.hidden_tag() }}
+            <div class="row">
+                <div class="col text-center">
+                    <h1 class="text-white mb-1" style="font-size: 2rem;">Cadastro de cliente</h1>
+                </div>
+            </div>
+            <div class="row">
+                <!-- COLUNA ESQUERDA -->
+                <div class="col-lg-6 col-md-12">
+                    <!-- Ativo (checkbox) -->
+                    <div class="mb-3 d-flex align-items-center gap-2">
+                        {{ form_cliente.ativo.label(class="form-label text-white mb-0") }}
+                        {{ form_cliente.ativo(class="form-check-input") }}
+                    </div>
+
+                    <!-- Campos principais -->
+                    {% for field in [form_cliente.nome, form_cliente.sobrenome, form_cliente.genero, form_cliente.cpf, form_cliente.rg, form_cliente.dt_nascimento, form_cliente.estado_civil] %}
+                    <div class="mb-3 d-flex align-items-center gap-3">
+                        {{ field.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
+                        {{ field(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;") }}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Plano com botão -->
+                    <div class="mb-3 d-flex align-items-center gap-3">
+                        {{ form_cliente.plano.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
+                        {{ form_cliente.plano(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;") }}
+                        <button class="btn btn-outline-light btn-sm">Selecionar</button>
+                    </div>
+                </div>
+
+                <!-- COLUNA DIREITA -->
+                <div class="col-lg-6 col-md-12">
+                    {% for field in [form_cliente.email, form_cliente.telefone, form_cliente.rua, form_cliente.numero, form_cliente.complemento, form_cliente.bairro, form_cliente.cidade, form_cliente.estado] %}
+                    <div class="mb-3 d-flex align-items-center gap-3">
+                        {{ field.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
+                        {{ field(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;") }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- BOTÃO DE SUBMIT -->
+            <div class="row mt-4">
+                <div class="col text-center">
+                    {{ form_cliente.submit(class="btn btn-outline-light btn-sm px-4") }}
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock %}

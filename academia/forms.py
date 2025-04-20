@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DecimalField, SelectMultipleField, SelectField
+from wtforms import StringField, SubmitField, DecimalField, SelectMultipleField, SelectField, BooleanField
 from wtforms.validators import DataRequired 
+from wtforms.validators import ValidationError
 
 class CadastroPlano(FlaskForm):
+    ativo = BooleanField(label="Ativo", default=True)
     plano = StringField(label="Nome do Plano", validators=[DataRequired()])
     preco = DecimalField(label="Preço do Plano", validators=[DataRequired()])
     
@@ -24,3 +26,42 @@ class CadastroPlano(FlaskForm):
         ], validators=[DataRequired()]
     )
     submit = SubmitField("Salvar Plano")
+
+class CadastroCliente(FlaskForm):
+    ativo = BooleanField(label="Ativo", default=True)
+    nome = StringField(label="Nome", validators=[DataRequired()])
+    sobrenome = StringField(label="Sobrenome", validators=[DataRequired()])
+    genero = SelectField(label="Gênero", 
+        choices=[
+            ("M", "Masculino"),
+            ("F", "Feminino"),
+            ("O", "Outro"),
+        ], validators=[DataRequired()]
+    )
+    cpf = StringField(label="CPF", validators=[DataRequired()])
+    rg = StringField(label="RG", validators=[DataRequired()])
+    dt_nascimento = StringField(label="Data de Nascimento", validators=[DataRequired()])
+    estado_civil = SelectField(label="Estado Civil", 
+        choices=[
+            ("Solteiro", "Solteiro"),
+            ("Casado", "Casado"),
+            ("Divorciado", "Divorciado"),
+            ("Viúvo", "Viúvo"),
+        ], validators=[DataRequired()]
+    )
+    email = StringField(label="Email", validators=[DataRequired()])
+    telefone = StringField(label="Telefone", validators=[DataRequired()])
+    rua = StringField(label="Rua", validators=[DataRequired()])
+    numero = StringField(label="Número", validators=[DataRequired()])
+    complemento = StringField(label="Complemento")
+    bairro = StringField(label="Bairro", validators=[DataRequired()])
+    cidade = StringField(label="Cidade", validators=[DataRequired()])
+    estado = StringField(label="Estado", validators=[DataRequired()])
+
+    plano = StringField(label="Plano", validators=[DataRequired()])
+    submit = SubmitField("Salvar Cliente")
+
+    def validate_cpf(self, cpf):
+        if not self.cpf.data.isdigit() or len(self.cpf.data) != 11:
+            raise ValidationError("CPF deve conter apenas números e ter 11 dígitos.")
+        

@@ -27,6 +27,11 @@
                     <form method="POST" class="form-register">
                         {{ form_plano.hidden_tag() }}
         
+                        <div>
+                            <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.ativo.label.text }}</label>
+                            {{ form_plano.ativo(class="form-check-input") }}
+                        </div>
+
                         <div class="mb-2">
                             <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.plano.label.text }}</label>
                             {{ form_plano.plano(class="form-control form-control-sm bg-dark text-white border-secondary") }}

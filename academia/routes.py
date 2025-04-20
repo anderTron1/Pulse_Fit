@@ -1,7 +1,7 @@
 from academia import app
 from flask import render_template, flash, request, redirect, url_for
 from academia import db 
-from academia.forms import CadastroPlano
+from academia.forms import CadastroPlano, CadastroCliente
 from academia.models import Plano
 
 
@@ -17,6 +17,7 @@ def page_registrar_plano():
         if form_plano.validate_on_submit():
             plano = form_plano.plano.data
             novo_plano  = Plano(
+                ativo = form_plano.ativo.data,
                 plano = plano,
                 preco = form_plano.preco.data,
                 categoria = form_plano.categoria.data,
@@ -43,6 +44,7 @@ def editar_plano(plano_id):
     
     if request.method == 'POST':
         if form.validate_on_submit():
+            plano.ativo = form.ativo.data
             plano.plano = form.plano.data
             plano.preco = form.preco.data
             plano.categoria = form.categoria.data
@@ -68,3 +70,8 @@ def deletar_plano():
         flash("Plano não encontrado.", category="danger")
     
     return redirect(url_for('page_registrar_plano'))
+
+@app.route("/registro")
+def page_registro_cliente():
+    form_cliente = CadastroCliente()
+    return render_template("cadastro_cliente.html", form_cliente=form_cliente)
