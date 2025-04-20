@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Home - Academia
+{% endblock %}
+
+{% block conteudo %}
+
+<header>
+    <div class="container mt-5 text-left">
+        <h1>Bem-vindo à Pulse Fit</h1>
+        <p class="lead">Seu ritmo, sua energia, sua melhor versão.</p>
+        <a href="" class="btn btn-primary">Registrar-se</a>
+        <a href="" class="btn btn-outline-success btn-block">Checkin</a>
+    </div>
+</header>
+
+<style>
+    header {
+        position: absolute;
+        width: 100%;
+        height: 100vh;
+        margin-top: -74px;
+        background-image: url('https://img.freepik.com/fotos-premium/tiro-de-uma-jovem-musculosa-malhando-no-treino-duro-no-ginasio-ela-esta-fazendo-exercicio-de-agachamento-com-barra_360066-6053.jpg');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        color: white;
+        overflow: hidden;
+        z-index: 0;
+    }
+    header::before{
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        width: 95%;  /* Ajuste o quanto da imagem será coberto */
+        height: 100%;
+        background: linear-gradient(to right, rgba(0, 0, 0, 1), transparent);
+    }
+    .container {
+        position: relative;
+        z-index: 2;
+        padding-left: 2rem;
+        text-align: left;
+    }
+</style>
+
+{% endblock %}
