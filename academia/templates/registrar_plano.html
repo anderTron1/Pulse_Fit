@@ -1,45 +1,89 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-    Registrar Plano
+    {% if plano_atual %}
+        Editar Plano
+    {% else %}
+        Registrar Plano
+    {% endif %}
 {% endblock %}
 
 {% block conteudo %}
 <body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
 
-    <div class="container d-flex justify-content-center align-items-center">
-        <div class="p-3 shadow" style="background-color: #111; border-radius: 10px; width: 100%; max-width: 400px; border: 1px solid #8800ff;">
-            <h4 class="text-center mb-3" style="font-weight: 600; color: #8800ff;">Registrar Plano</h4>
+    <div class="container-fluid d-flex justify-content-center align-items-center">
+        <div class="row" style="width: 80%;">
 
-            <form method="POST" class="form-register">
-                {{ form_plano.hidden_tag() }}
-
-                <div class="mb-2">
-                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.plano.label.text }}</label>
-                    {{ form_plano.plano(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+            <div class="col-lg-7 col-md-8 col-sm-12">
+                <div class="p-3 shadow" style="background-color: #111; border-radius: 10px; width: 100%; max-width: 500px; border: 1px solid #8800ff;">
+                    <h4 class="text-center mb-2" style="font-weight: 700; color: #8800ff;">
+                        {% if plano_atual %}
+                            Editar Plano
+                        {% else %}
+                            Registrar Plano
+                        {% endif %}
+                    </h4>
+        
+                    <form method="POST" class="form-register">
+                        {{ form_plano.hidden_tag() }}
+        
+                        <div class="mb-2">
+                            <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.plano.label.text }}</label>
+                            {{ form_plano.plano(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+                        </div>
+        
+                        <div class="mb-2">
+                            <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.categoria.label.text }}</label>
+                            {{ form_plano.categoria(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+                        </div>
+        
+                        <div class="mb-2">
+                            <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.descricao.label.text }}</label>
+                            {{ form_plano.descricao(class="form-control form-control-sm bg-dark text-white border-secondary", rows=2) }}
+                        </div>
+        
+                        <div class="mb-3">
+                            <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.preco.label.text }}</label>
+                            {{ form_plano.preco(class="form-control form-control-sm bg-dark text-white border-secondary decimal-field") }}
+                        </div>
+        
+                        <div class="d-grid">
+                            {{ form_plano.submit(class="btn btn-sm btn-outline-light") }}
+                        </div>
+                    </form>
                 </div>
+            </div>
+            <div class="col-lg-5 col-md-4 col-sm-12" style=" max-height: 76vh; overflow-x: auto;">
+                <table class="table table-hover table-dark table-bordered" style="background-color: #111; border-radius: 10px; width: 100%; max-width: 800px; border: 1px solid #8800ff;">
+                    <thead>
 
-                <div class="mb-2">
-                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.categoria.label.text }}</label>
-                    {{ form_plano.categoria(class="form-control form-control-sm bg-dark text-white border-secondary") }}
-                </div>
-
-                <div class="mb-2">
-                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.descricao.label.text }}</label>
-                    {{ form_plano.descricao(class="form-control form-control-sm bg-dark text-white border-secondary", rows=2) }}
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-white" style="font-size: 0.9rem;">{{ form_plano.preco.label.text }}</label>
-                    {{ form_plano.preco(class="form-control form-control-sm bg-dark text-white border-secondary decimal-field") }}
-                </div>
-
-                <div class="d-grid">
-                    {{ form_plano.submit(class="btn btn-sm btn-outline-light") }}
-                </div>
-            </form>
+                        <th class="col">Plano</th>
+                        <th class="col">Preço</th>
+                        <th class="col">Ações</th>
+                    </thead>
+                    <tbody>
+                        {% for plano in planos %}
+                            <tr>
+                                <td>{{ plano.plano }} - {{ plano.categoria }}</td>
+                                <td>R$: {{ plano.preco }}</td>
+                                <td>
+                                    <form method="GET" action="{{ url_for('editar_plano',  plano_id=plano.id) }}" style="display: inline;">
+                                        <input type="hidden" name="plano_id" value="{{ plano.id }}">
+                                        <button class="btn btn-success btn-sm" type="submit">Editar</button>
+                                    </form>
+                                    
+                                    <form method="POST" action="{{ url_for('deletar_plano') }}" style="display: inline;">
+                                        <input type="hidden" name="plano_id" value="{{ plano.id }}">
+                                        <button class="btn btn-danger btn-sm" type="submit">Deletar</button>
+                                    </form>
+                                    
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
+        
 </body>
 {% endblock %}

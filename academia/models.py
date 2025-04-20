@@ -13,15 +13,4 @@ class Plano(db.Model):
 
     def __repr__(self):
         return f"<Plano {self.nome}>"
-    
-    def formatar_preco_para_db(valor_str):
-        valor_str = valor_str.replace('R$', '').strip()
-
-        valor_str = valor_str.replace('.', '')
-
-        valor_str = valor_str.replace(',', '.')
-
-        try:
-            return float(valor_str)
-        except ValueError:
-            return None
+ 
