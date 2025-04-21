@@ -5,8 +5,8 @@
     }
 </style>
 
-<!-- Modal infor -->
-<div class="modal fade" id="ModalCliente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Planos -->
+<div class="modal fade" id="ModalPlanos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -50,6 +50,47 @@
     </div>
 </div>
 
+<!-- Modal Clientes -->
+<div class="modal fade" id="ModalCliente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Clientes</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div style="max-height: 40vh; overflow-x: auto;">
+                <table class="table table-hover table-dark table-bordered" style="background-color: #111; border-radius: 10px; width: 100%; max-width: 800px; border: 1px solid #8800ff;">
+                    <thead>
+                        <th class="col">ID</th>
+                        <th class="col">Nome</th>
+                        <th class="col">CPF</th>
+                        <th class="col">Ativo</th>
+                        <th class="col">Ações</th>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                            <tr data-id="{{ cliente.id }}">
+                                <td>{{ cliente.id }}</td>
+                                <td>{{ cliente.nome }}</td>
+                                <td>{{ cliente.cpf }}</td>
+                                <td>{{ cliente.ativo }}</td>
+                                <td>
+                                    <a  href="{{ url_for('editar_cliente', cliente_id=cliente.id) }}" class="btn btn-sm btn-outline-light selecionar-cliente">Selecionar</a>
+                                </td>
+                            </tr>
+                        {% endfor  %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
     // Atualiza a lista de itens da descrição ao clicar em uma linha
     document.querySelectorAll('.selectable-row').forEach(row => {
@@ -73,14 +114,4 @@
         });
     });
 
-    // Captura o ID do plano ao clicar no botão "Selecionar"
-    document.querySelectorAll('.selecionar-plano').forEach(button => {
-        button.addEventListener('click', function (event) {
-            event.stopPropagation(); // Impede que o clique na linha seja acionado
-            const row = this.closest('.selectable-row'); // Obtém a linha correspondente
-            const planoId = row.getAttribute('data-id'); // Obtém o ID do plano
-            console.log("Plano selecionado:", planoId); // Substitua isso por sua lógica
-            // Aqui você pode enviar o ID para o servidor ou usá-lo conforme necessário
-        });
-    });
 </script>

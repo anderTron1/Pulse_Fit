@@ -104,8 +104,55 @@ def page_registro_cliente():
             for err in form_cliente.errors:
                 flash(f"Erro ao cadastrar o cliente: {err}", category="danger")
         return redirect(url_for("page_registro_cliente"))
+        
+    if request.method == "GET":
+        with db.session.no_autoflush:
+            planos = Plano.query.filter_by(ativo=True).all()
+            clientes = Cliente.query.all()
+        return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, clientes=clientes)
+
+@app.route("/editar-cliente/<int:cliente_id>", methods=['GET', 'POST'])
+def editar_cliente(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+    form_cliente = CadastroCliente(obj=cliente)
+
+    if request.method == "POST":
+        if "selecionar_plano" in request.form:
+            return render_template("cadastro_cliente.html", form_cliente=form_cliente)
+
+        if "selecionar_cliente" in request.form:
+            planos = Plano.query.filter_by(ativo=True).all()
+            clientes = Cliente.query.all()
+            return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, clientes=clientes, cliente_atual=cliente)
+
+        if form_cliente.validate_on_submit():
+            cliente.ativo = form_cliente.ativo.data
+            cliente.nome = form_cliente.nome.data
+            cliente.sobrenome = form_cliente.sobrenome.data
+            cliente.genero = form_cliente.genero.data
+            cliente.cpf = form_cliente.cpf.data
+            cliente.rg = form_cliente.rg.data
+            cliente.dt_nascimento = form_cliente.dt_nascimento.data
+            cliente.estado_civil = form_cliente.estado_civil.data
+            cliente.email = form_cliente.email.data
+            cliente.telefone = form_cliente.telefone.data
+            cliente.rua = form_cliente.rua.data
+            cliente.numero = form_cliente.numero.data
+            cliente.complemento = form_cliente.complemento.data
+            cliente.bairro = form_cliente.bairro.data
+            cliente.cidade = form_cliente.cidade.data
+            cliente.estado = form_cliente.estado.data
+            cliente.plano = form_cliente.plano.data
+
+            db.session.commit() 
+            flash(f"Cliente {cliente.nome} atualizado com sucesso!", category="success")
+            return redirect(url_for("page_registro_cliente"))
+
+        # Caso o formulário não seja válido, renderiza novamente o template com os erros
+        flash("Erro ao atualizar o cliente. Verifique os dados e tente novamente.", category="danger")
+        #return render_template("cadastro_cliente.html", form_cliente=form_cliente)
 
     with db.session.no_autoflush:
         planos = Plano.query.filter_by(ativo=True).all()
 
-    return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos)
+    return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, cliente_atual=cliente)
