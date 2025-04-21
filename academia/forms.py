@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DecimalField, SelectMultipleField, SelectField, BooleanField
+from wtforms import StringField, SubmitField, DecimalField, SelectMultipleField, SelectField, BooleanField, DateField
 from wtforms.validators import DataRequired 
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, Email
 
 class CadastroPlano(FlaskForm):
     ativo = BooleanField(label="Ativo", default=True)
@@ -40,7 +40,10 @@ class CadastroCliente(FlaskForm):
     )
     cpf = StringField(label="CPF", validators=[DataRequired()])
     rg = StringField(label="RG", validators=[DataRequired()])
-    dt_nascimento = StringField(label="Data de Nascimento", validators=[DataRequired()])
+    dt_nascimento = DateField(label="Data de Nascimento", 
+                              format="%Y-%m-%d",
+                              render_kw={"placeholder": "YYYY-MM-DD"},
+                              validators=[DataRequired()])
     estado_civil = SelectField(label="Estado Civil", 
         choices=[
             ("Solteiro", "Solteiro"),
@@ -49,7 +52,7 @@ class CadastroCliente(FlaskForm):
             ("Viúvo", "Viúvo"),
         ], validators=[DataRequired()]
     )
-    email = StringField(label="Email", validators=[DataRequired()])
+    email = StringField(label="Email", validators=[Email(),DataRequired()])
     telefone = StringField(label="Telefone", validators=[DataRequired()])
     rua = StringField(label="Rua", validators=[DataRequired()])
     numero = StringField(label="Número", validators=[DataRequired()])

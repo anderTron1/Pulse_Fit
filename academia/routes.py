@@ -2,7 +2,7 @@ from academia import app
 from flask import render_template, flash, request, redirect, url_for
 from academia import db 
 from academia.forms import CadastroPlano, CadastroCliente
-from academia.models import Plano
+from academia.models import Plano, Cliente
 
 
 @app.route("/")
@@ -71,7 +71,41 @@ def deletar_plano():
     
     return redirect(url_for('page_registrar_plano'))
 
-@app.route("/registro")
+@app.route("/registro", methods=['GET', 'POST'])
 def page_registro_cliente():
     form_cliente = CadastroCliente()
-    return render_template("cadastro_cliente.html", form_cliente=form_cliente)
+
+    if request.method == 'POST':
+        if form_cliente.validate_on_submit():
+            cliente = form_cliente.nome.data
+            novo_cliente = Cliente(
+                ativo = form_cliente.ativo.data,
+                nome = form_cliente.nome.data,
+                sobrenome = form_cliente.sobrenome.data,
+                genero = form_cliente.genero.data,
+                cpf = form_cliente.cpf.data,
+                rg = form_cliente.rg.data,
+                dt_nascimento = form_cliente.dt_nascimento.data,
+                estado_civil = form_cliente.estado_civil.data,
+                email = form_cliente.email.data,
+                telefone = form_cliente.telefone.data,
+                rua = form_cliente.rua.data,
+                numero = form_cliente.numero.data,
+                complemento = form_cliente.complemento.data,
+                bairro = form_cliente.bairro.data,
+                cidade = form_cliente.cidade.data,
+                estado = form_cliente.estado.data,
+                plano = form_cliente.plano.data
+            )    
+            db.session.add(novo_cliente)
+            db.session.commit()
+            flash(f"Cliente {cliente} cadastrado com sucesso!", category="success")
+        if form_cliente.errors:
+            for err in form_cliente.errors:
+                flash(f"Erro ao cadastrar o cliente: {err}", category="danger")
+        return redirect(url_for("page_registro_cliente"))
+
+    with db.session.no_autoflush:
+        planos = Plano.query.filter_by(ativo=True).all()
+
+    return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos)

@@ -35,8 +35,9 @@
                     <!-- Plano com botão -->
                     <div class="mb-3 d-flex align-items-center gap-3">
                         {{ form_cliente.plano.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
-                        {{ form_cliente.plano(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;") }}
-                        <button class="btn btn-outline-light btn-sm">Selecionar</button>
+                        {{ form_cliente.plano(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;", readonly=True) }}
+                        {% include 'includes/modal_cliente.html' %}
+                        <button data-bs-toggle="modal" data-bs-target="#ModalCliente"  class="btn btn-outline-light btn-sm">Selecionar</button>
                     </div>
                 </div>
 
@@ -54,10 +55,33 @@
             <!-- BOTÃO DE SUBMIT -->
             <div class="row mt-4">
                 <div class="col text-center">
-                    {{ form_cliente.submit(class="btn btn-outline-light btn-sm px-4") }}
+                    <div class="d-flex justify-content-center gap-3">
+                        {{ form_cliente.submit(class="btn btn-success btn-sm px-4") }}
+                        <button class="btn btn-primary btn-sm px-4">Clientes</button>
+                    </div>
                 </div>
             </div>
+
         </form>
     </div>
 </body>
+
+<script>
+    // Captura o ID do plano ao clicar no botão "Selecionar"
+    document.querySelectorAll('.selecionar-plano').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault(); 
+            const row = this.closest('.selectable-row'); 
+            const planoId = row.getAttribute('data-id'); 
+
+            const planoField = document.querySelector('[name="plano"]');
+            planoField.value = planoId;
+
+            const modal = document.getElementById('ModalCliente');
+            const bootstrapModal = bootstrap.Modal.getInstance(modal);
+            bootstrapModal.hide();
+        });
+    });
+</script>
+
 {% endblock %}

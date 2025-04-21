@@ -1,0 +1,86 @@
+<style>
+    .modal-content {
+        background-color: #212121;
+        color: whitesmoke;
+    }
+</style>
+
+<!-- Modal infor -->
+<div class="modal fade" id="ModalCliente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Planos</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div style="max-height: 40vh; overflow-x: auto;">
+                    <table class="table table-hover table-dark table-bordered" style="background-color: #111; border-radius: 10px; width: 100%; max-width: 800px; border: 1px solid #8800ff;">
+                        <thead>
+                            <th class="col">Plano</th>
+                            <th class="col">Preço</th>
+                            <th class="col">Categoria</th>
+                            <th class="col">Ação</th>
+                        </thead>
+                        <tbody>
+                            {% for plano in planos %}
+                                <tr class="selectable-row" data-id="{{ plano.id }}" data-descricao="{{ plano.descricao }}">
+                                    <td>{{ plano.plano }}</td>
+                                    <td>R$: {{ plano.preco }}</td>
+                                    <td>{{ plano.categoria }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-light selecionar-plano">Selecionar</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="descricao-plano" style="margin-top: 10px; font-size: 0.9rem;">
+                    <strong>Descrição:</strong>
+                    <ul id="descricao-lista">
+                        <!-- Os itens da descrição serão adicionados aqui dinamicamente -->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Atualiza a lista de itens da descrição ao clicar em uma linha
+    document.querySelectorAll('.selectable-row').forEach(row => {
+        row.addEventListener('click', function () {
+            const descricao = this.getAttribute('data-descricao');
+            const descricaoLista = document.getElementById('descricao-lista');
+            descricaoLista.innerHTML = ""; // Limpa os itens anteriores
+
+            if (descricao) {
+                const itens = descricao.split(";"); // Divide a descrição em itens
+                itens.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.trim(); // Adiciona o texto do item
+                    descricaoLista.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "Nenhum item disponível.";
+                descricaoLista.appendChild(li);
+            }
+        });
+    });
+
+    // Captura o ID do plano ao clicar no botão "Selecionar"
+    document.querySelectorAll('.selecionar-plano').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.stopPropagation(); // Impede que o clique na linha seja acionado
+            const row = this.closest('.selectable-row'); // Obtém a linha correspondente
+            const planoId = row.getAttribute('data-id'); // Obtém o ID do plano
+            console.log("Plano selecionado:", planoId); // Substitua isso por sua lógica
+            // Aqui você pode enviar o ID para o servidor ou usá-lo conforme necessário
+        });
+    });
+</script>
