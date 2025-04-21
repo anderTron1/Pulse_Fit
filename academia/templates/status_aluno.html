@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+    Status Aluno
+{% endblock %}
+
+{% block conteudo %}
+<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
+
+    <div class="container mt-5">
+        <h3 class="mb-4">Painel de Status dos Alunos</h3>
+        
+        <table class="table table-hover table-dark">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Frequência</th>
+                    <th>Risco de Desistência</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                <tr>
+                    <td>{{ aluno.id }}</td>
+                    <td>{{ aluno.nome }}</td>
+                    <td>
+                        <a class="btn btn-outline-info btn-sm" href="">
+                            Ver Frequência
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-warning btn-sm" href="">
+                            Ver Risco
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+{% endblock %}

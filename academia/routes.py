@@ -189,3 +189,8 @@ def editar_cliente(cliente_id):
        clientes = Cliente.query.all()
     return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, clientes=clientes, cliente_atual=cliente)
 
+
+@app.route('/status_aluno')
+def page_status_aluno():
+    clientes = Cliente.query.all()
+    return render_template("status_aluno.html", alunos=clientes)
