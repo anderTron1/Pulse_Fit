@@ -7,20 +7,52 @@
 {% block conteudo %}
 
 <header>
-    <div class="container mt-5 text-left">
-        <h1>Bem-vindo à Pulse Fit</h1>
-        <p class="lead">Seu ritmo, sua energia, sua melhor versão.</p>
-        <a href="" class="btn btn-primary">Registrar-se</a>
-        <a href="" class="btn btn-outline-success btn-block">Checkin</a>
-    </div>
+    {% if form_checkin %}
+        <div class="form-checkin-wrapper">
+            <div class="form-checkin-card">
+                <h4 class="text-center mb-3 fw-bold" style="color: #8800ff;">
+                    Registrar Checkin
+                </h4>
+
+                <form method="POST" action="{{ url_for('page_checkin') }}">
+                    {{ form_checkin.hidden_tag() }}
+
+                    <div class="mb-2">
+                        {{ form_checkin.cliente_id.label(class="form-label") }}
+                        {{ form_checkin.cliente_id(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+                    </div>
+                    <div class="mb-2">
+                        {{ form_checkin.dt_checkin.label(class="form-label") }}
+                        {{ form_checkin.dt_checkin(class="form-control form-control-sm bg-dark text-white border-secondary") }} 
+                    </div>
+                    <div class="mb-2">
+                        {{ form_checkin.dt_checkout.label(class="form-label") }}
+                        {{ form_checkin.dt_checkout(class="form-control form-control-sm bg-dark text-white border-secondary") }}
+                    </div>
+                    <div class="mb-2">
+                        {{ form_checkin.submit(class="btn btn-success btn-sm px-4") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="container-init container mt-5 text-left">    
+            <h1>Bem-vindo à Pulse Fit</h1>
+            <p class="lead">Seu ritmo, sua energia, sua melhor versão.</p>
+            <a href="" class="btn btn-primary">Registrar-se</a>
+            <a type="button" href="{{ url_for('page_checkin') }}" class="btn btn-outline-success btn-block">Checkin</a>
+        </div>
+    {% endif %}
 </header>
 
 <style>
     header {
-        position: absolute;
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100vh;
-        margin-top: -74px;
+        margin-top: 0;
         background-image: url('https://img.freepik.com/fotos-premium/tiro-de-uma-jovem-musculosa-malhando-no-treino-duro-no-ginasio-ela-esta-fazendo-exercicio-de-agachamento-com-barra_360066-6053.jpg');
         background-size: cover;
         background-position: center;
@@ -32,19 +64,43 @@
         overflow: hidden;
         z-index: 0;
     }
-    header::before{
+
+    header::before {
         content: "";
         position: absolute;
-        top: 0; left: 0;
-        width: 95%;  /* Ajuste o quanto da imagem será coberto */
+        top: 0;
+        left: 0;
+        width: 95%;
         height: 100%;
         background: linear-gradient(to right, rgba(0, 0, 0, 1), transparent);
+        z-index: 1;
     }
-    .container {
+
+    .container-init {
         position: relative;
         z-index: 2;
         padding-left: 2rem;
         text-align: left;
+    }
+
+    .form-checkin-wrapper {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-checkin-card {
+        background-color: #111;
+        border-radius: 12px;
+        border: 1px solid #8800ff;
+        padding: 2rem;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        max-width: 400px;
+        width: 90%;
     }
 </style>
 

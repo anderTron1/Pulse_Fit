@@ -1,5 +1,6 @@
 from academia import db 
 from datetime import datetime
+from flask import flash
 
 class Plano(db.Model):
     __tablename__ = "plano"
@@ -37,4 +38,21 @@ class Cliente(db.Model):
     cidade = db.Column(db.String(50), nullable=False)
     estado = db.Column(db.String(50), nullable=False)
 
-    plano = db.Column(db.Integer, db.ForeignKey("plano.id",  ondelete="RESTRICT", name="fk_cliente_plano"))
+    plano = db.Column(db.Integer, db.ForeignKey("plano.id",   name="fk_cliente_plano"))
+
+class Checkin(db.Model):
+    __tablename__ = "checkin"
+    id = db.Column(db.Integer, primary_key=True)
+    dt_checkin = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    dt_checkout = db.Column(db.DateTime, nullable=True)
+    cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id",  name="fk_checkin_cliente"))
+    
+    def verificar_dia(self):
+        if self.dt_checkin > self.dt_checkout:
+            flash("Data e hora de check-in não pode ser maior que a data e hora de check-out.", "danger")
+            return False
+        elif self.dt_checkin > datetime.utcnow() or self.dt_checkout > datetime.utcnow():
+            flash("Data de check-in e check-out não podem ser maiores que a data atual.", "danger")
+            return False
+        else:
+            return True

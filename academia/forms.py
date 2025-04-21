@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DecimalField, SelectMultipleField, SelectField, BooleanField, DateField
+from wtforms import StringField, SubmitField, IntegerField, DecimalField, SelectMultipleField, SelectField, BooleanField, DateField, DateTimeField
 from wtforms.validators import DataRequired 
 from wtforms.validators import ValidationError, Email
 
@@ -69,4 +69,23 @@ class CadastroCliente(FlaskForm):
     def validate_cpf(self, cpf):
         if not self.cpf.data.isdigit() or len(self.cpf.data) != 11:
             raise ValidationError("CPF deve conter apenas números e ter 11 dígitos.")
+        
+class CadastroCheckin(FlaskForm):
+    cliente_id = IntegerField(label="Código do Cliente", validators=[DataRequired()])
+    
+    dt_checkin = DateTimeField(
+        label="Data de Check-in", 
+        format="%Y-%m-%dT%H:%M",
+        render_kw={"placeholder": "YYYY-MM-DD HH:MM", "type": "datetime-local"},
+        validators=[DataRequired()]
+    )
+    
+    dt_checkout = DateTimeField(
+        label="Data de Check-out", 
+        format="%Y-%m-%dT%H:%M",
+        render_kw={"placeholder": "YYYY-MM-DD HH:MM", "type": "datetime-local"}
+    )
+
+    submit = SubmitField("Registrar Check-in")
+
         

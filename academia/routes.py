@@ -1,13 +1,38 @@
 from academia import app
 from flask import render_template, flash, request, redirect, url_for
 from academia import db 
-from academia.forms import CadastroPlano, CadastroCliente
-from academia.models import Plano, Cliente
+from academia.forms import CadastroPlano, CadastroCliente, CadastroCheckin
+from academia.models import Plano, Cliente, Checkin
 
 
 @app.route("/")
 def page_home():
     return render_template("home.html")
+
+@app.route("/checkin", methods=['GET', 'POST'])
+def page_checkin():
+    form_checkin = CadastroCheckin()
+
+    if request.method == 'POST':
+        if form_checkin.validate_on_submit():
+            id = form_checkin.cliente_id.data
+            cliente = Cliente.query.get(id)
+            if cliente:
+                novo_checkin = Checkin(
+                    cliente_id=cliente.id,
+                    dt_checkin=form_checkin.dt_checkin.data,
+                    dt_checkout=form_checkin.dt_checkout.data
+                )
+                if novo_checkin.verificar_dia():
+                    db.session.add(novo_checkin)
+                    db.session.commit()
+                    flash(f"Check-in realizado com sucesso para o cliente {cliente.nome}!", category="success")
+                    return redirect(url_for("page_home"))
+            else:
+                flash("Cliente não encontrado.", category="danger")
+    else:
+        print("é um: ", request.method)
+    return render_template("home.html", form_checkin=form_checkin)
 
 @app.route("/registrar_plano", methods=['GET', 'POST'])
 def page_registrar_plano():
@@ -164,16 +189,3 @@ def editar_cliente(cliente_id):
        clientes = Cliente.query.all()
     return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, clientes=clientes, cliente_atual=cliente)
 
-@app.route("/deletar-cliente", methods=['POST'])
-def deletar_cliente():
-    cliente_id = request.form.get("plano_id")
-
-    print("Valor do id: ", cliente_id)
-    cliente = Cliente.query.get(cliente_id)
-    if cliente:
-        db.session.delete(cliente)
-        db.session.commit()
-        flash(f"Cliente {cliente.nome} deletado com sucesso!", category="success")
-    else:
-        flash("Cliente não encontrado.", category="danger")
-    return redirect(url_for("page_registro_cliente"))
