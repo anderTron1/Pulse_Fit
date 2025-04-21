@@ -37,4 +37,4 @@ class Cliente(db.Model):
     cidade = db.Column(db.String(50), nullable=False)
     estado = db.Column(db.String(50), nullable=False)
 
-    plano = db.Column(db.Integer, db.ForeignKey("plano.id"))
+    plano = db.Column(db.Integer, db.ForeignKey("plano.id",  ondelete="RESTRICT", name="fk_cliente_plano"))

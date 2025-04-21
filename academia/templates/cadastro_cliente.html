@@ -12,28 +12,32 @@
             {{ form_cliente.hidden_tag() }}
             <div class="row">
                 <div class="col text-center">
-                    <h1 class="text-white mb-1" style="font-size: 2rem;">Cadastro de cliente</h1>
+                    {% if cliente_atual %}
+                        <h1 class="text-white mb-1" style="font-size: 2rem;">Editar cliente</h1>
+                    {% else %}
+                        <h1 class="text-white mb-1" style="font-size: 2rem;">Cadastro de cliente</h1>
+                    {% endif %}
                 </div>
             </div>
             <div class="row">
                 <!-- COLUNA ESQUERDA -->
                 <div class="col-lg-6 col-md-12">
                     <!-- Ativo (checkbox) -->
-                    <div class="mb-3 d-flex align-items-center gap-2">
+                    <div class="mb-2 d-flex align-items-center gap-2">
                         {{ form_cliente.ativo.label(class="form-label text-white mb-0") }}
                         {{ form_cliente.ativo(class="form-check-input") }}
                     </div>
 
                     <!-- Campos principais -->
                     {% for field in [form_cliente.nome, form_cliente.sobrenome, form_cliente.genero, form_cliente.cpf, form_cliente.rg, form_cliente.dt_nascimento, form_cliente.estado_civil] %}
-                    <div class="mb-3 d-flex align-items-center gap-3">
+                    <div class="mb-2 d-flex align-items-center gap-3">
                         {{ field.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
                         {{ field(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;") }}
                     </div>
                     {% endfor %}
 
                     <!-- Plano com botão -->
-                    <div class="mb-3 d-flex align-items-center gap-3">
+                    <div class="mb-2 d-flex align-items-center gap-3">
                         {{ form_cliente.plano.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
                         {{ form_cliente.plano(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;", readonly=True) }}
                         {% include 'includes/modal_cliente.html' %}
@@ -44,11 +48,15 @@
                 <!-- COLUNA DIREITA -->
                 <div class="col-lg-6 col-md-12">
                     {% for field in [form_cliente.email, form_cliente.telefone, form_cliente.rua, form_cliente.numero, form_cliente.complemento, form_cliente.bairro, form_cliente.cidade, form_cliente.estado] %}
-                    <div class="mb-3 d-flex align-items-center gap-3">
+                    <div class="mb-2 d-flex align-items-center gap-3">
                         {{ field.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
                         {{ field(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;") }}
                     </div>
                     {% endfor %}
+                    <div class="mb-2 d-flex align-items-center gap-3">
+                        {{ form_cliente.id.label(class="form-label text-white mb-0", style="min-width: 120px;") }}
+                        {{ form_cliente.id(class="form-control form-control-sm text-white", style="flex-grow: 1; background-color: #111; border: 1px solid #8800ff;", readonly=True) }}
+                    </div>
                 </div>
             </div>
 
@@ -57,6 +65,14 @@
                 <div class="col text-center">
                     <div class="d-flex justify-content-center gap-3">
                         {{ form_cliente.submit(class="btn btn-success btn-sm px-4") }}
+                        <a type="button" href="{{ url_for('page_registro_cliente') }}" class="btn btn-info">Cancelar</a>
+                        
+                        {% if cliente_atual %}
+                            <input type="hidden" name="plano_id" value="{{ form_cliente.id.data }}">
+                            <button class="btn btn-danger" name="deletar_plano">Deletar</button>
+                        {% else %}
+                            
+                        {% endif %}
                         <button type="button" nome="selecionar_cliente" data-bs-toggle="modal" data-bs-target="#ModalCliente" class="btn btn-primary btn-sm px-4">Clientes</button>
                     </div>
                 </div>

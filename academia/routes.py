@@ -95,7 +95,7 @@ def page_registro_cliente():
                 bairro = form_cliente.bairro.data,
                 cidade = form_cliente.cidade.data,
                 estado = form_cliente.estado.data,
-                plano = form_cliente.plano.data
+                plano = form_cliente.plano.data,
             )    
             db.session.add(novo_cliente)
             db.session.commit()
@@ -120,12 +120,7 @@ def editar_cliente(cliente_id):
         if "selecionar_plano" in request.form:
             return render_template("cadastro_cliente.html", form_cliente=form_cliente)
 
-        if "selecionar_cliente" in request.form:
-            planos = Plano.query.filter_by(ativo=True).all()
-            clientes = Cliente.query.all()
-            return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, clientes=clientes, cliente_atual=cliente)
-
-        if form_cliente.validate_on_submit():
+        if form_cliente.validate_on_submit() and not "deletar_plano" in request.form:
             cliente.ativo = form_cliente.ativo.data
             cliente.nome = form_cliente.nome.data
             cliente.sobrenome = form_cliente.sobrenome.data
@@ -147,12 +142,38 @@ def editar_cliente(cliente_id):
             db.session.commit() 
             flash(f"Cliente {cliente.nome} atualizado com sucesso!", category="success")
             return redirect(url_for("page_registro_cliente"))
+        elif "deletar_plano" in request.form:
+            cliente_id = request.form.get("plano_id")
 
-        # Caso o formulário não seja válido, renderiza novamente o template com os erros
-        flash("Erro ao atualizar o cliente. Verifique os dados e tente novamente.", category="danger")
-        #return render_template("cadastro_cliente.html", form_cliente=form_cliente)
+            print("Valor do id: ", cliente_id)
+            cliente = Cliente.query.get(cliente_id)
+            if cliente:
+                db.session.delete(cliente)
+                db.session.commit()
+                flash(f"Cliente {cliente.nome} deletado com sucesso!", category="success")
+            else:
+                flash("Cliente não encontrado.", category="danger")
+            return redirect(url_for("page_registro_cliente"))
+        else:
+            # Caso o formulário não seja válido, renderiza novamente o template com os erros
+            flash("Erro ao atualizar o cliente. Verifique os dados e tente novamente.", category="danger")
+            #return render_template("cadastro_cliente.html", form_cliente=form_cliente)
 
     with db.session.no_autoflush:
-        planos = Plano.query.filter_by(ativo=True).all()
+       planos = Plano.query.filter_by(ativo=True).all()
+       clientes = Cliente.query.all()
+    return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, clientes=clientes, cliente_atual=cliente)
 
-    return render_template("cadastro_cliente.html", form_cliente=form_cliente, planos=planos, cliente_atual=cliente)
+@app.route("/deletar-cliente", methods=['POST'])
+def deletar_cliente():
+    cliente_id = request.form.get("plano_id")
+
+    print("Valor do id: ", cliente_id)
+    cliente = Cliente.query.get(cliente_id)
+    if cliente:
+        db.session.delete(cliente)
+        db.session.commit()
+        flash(f"Cliente {cliente.nome} deletado com sucesso!", category="success")
+    else:
+        flash("Cliente não encontrado.", category="danger")
+    return redirect(url_for("page_registro_cliente"))

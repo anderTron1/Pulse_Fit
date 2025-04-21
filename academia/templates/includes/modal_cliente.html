@@ -76,6 +76,9 @@
                                 <td>{{ cliente.cpf }}</td>
                                 <td>{{ cliente.ativo }}</td>
                                 <td>
+                                    <!--<form method="GET" action="{{ url_for('editar_cliente', cliente_id=cliente.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-light selecionar-cliente">Editar</button>
+                                    </form>-->
                                     <a  href="{{ url_for('editar_cliente', cliente_id=cliente.id) }}" class="btn btn-sm btn-outline-light selecionar-cliente">Selecionar</a>
                                 </td>
                             </tr>

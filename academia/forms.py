@@ -61,6 +61,8 @@ class CadastroCliente(FlaskForm):
     cidade = StringField(label="Cidade", validators=[DataRequired()])
     estado = StringField(label="Estado", validators=[DataRequired()])
 
+    id = StringField(label="Código do Cliente")
+
     plano = StringField(label="Plano", validators=[DataRequired()])
     submit = SubmitField("Salvar Cliente")
 
