@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Risco de Churn{% endblock %}
+
+{% block conteudo %}
+<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
+
+    <div class="container mt-4">
+        <h3>Risco de Desistência - {{ aluno.nome }}</h3>
+        <div class="alert alert-info mt-3">
+            Probabilidade de Desistência: <strong>{{ risco }}</strong>
+        </div>
+    </div>
+</body>
+{% endblock %}

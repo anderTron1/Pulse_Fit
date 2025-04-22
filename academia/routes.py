@@ -3,6 +3,10 @@ from flask import render_template, flash, request, redirect, url_for
 from academia import db 
 from academia.forms import CadastroPlano, CadastroCliente, CadastroCheckin
 from academia.models import Plano, Cliente, Checkin
+from datetime import datetime, timedelta
+
+import pika
+import json 
 
 
 @app.route("/")
@@ -18,20 +22,33 @@ def page_checkin():
             id = form_checkin.cliente_id.data
             cliente = Cliente.query.get(id)
             if cliente:
-                novo_checkin = Checkin(
-                    cliente_id=cliente.id,
-                    dt_checkin=form_checkin.dt_checkin.data,
-                    dt_checkout=form_checkin.dt_checkout.data
-                )
-                if novo_checkin.verificar_dia():
-                    db.session.add(novo_checkin)
-                    db.session.commit()
+
+                dt_checkin = form_checkin.dt_checkin.data
+                dt_checkout =  form_checkin.dt_checkout.data
+                if Checkin.verificar_dia(dt_checkin, dt_checkout):
+                    mensagem = {
+                        "cliente_id": cliente.id,
+                        "dt_checkin": dt_checkin.strftime("%Y-%m-%d %H:%M:%S"),
+                        "dt_checkout": dt_checkout.strftime("%Y-%m-%d %H:%M:%S")
+                    }
+
+                    # Enviar mensagem para o RabbitMQ
+                    conexao = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+                    canal = conexao.channel()
+                    canal.queue_declare(queue="fila_checkin", durable=True)
+                    canal.basic_publish(
+                        exchange="",
+                        routing_key="fila_checkin",
+                        body=json.dumps(mensagem),
+                        properties=pika.BasicProperties(delivery_mode=2)
+                    )
+                    conexao.close()
+
                     flash(f"Check-in realizado com sucesso para o cliente {cliente.nome}!", category="success")
                     return redirect(url_for("page_home"))
+                
             else:
                 flash("Cliente não encontrado.", category="danger")
-    else:
-        print("é um: ", request.method)
     return render_template("home.html", form_checkin=form_checkin)
 
 @app.route("/registrar_plano", methods=['GET', 'POST'])
@@ -194,3 +211,24 @@ def editar_cliente(cliente_id):
 def page_status_aluno():
     clientes = Cliente.query.all()
     return render_template("status_aluno.html", alunos=clientes)
+
+@app.route('/status_aluno/<int:cliente_id>/frequencia')
+def page_aluno_frequencia(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+    checkins = Checkin.query.filter_by(cliente_id=cliente.id).order_by(Checkin.dt_checkin.desc()).all()
+    print("Check-ins do cliente:", checkins)
+    return render_template("aluno_frequencia.html", aluno=cliente, checkins=checkins)
+
+@app.route('/status_aluno/<int:cliente_id>/risco-churn')
+def page_aluno_risco_churn(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+
+    ausencias = Checkin.query.filter_by(cliente_id=cliente.id).filter(Checkin.dt_checkin < datetime.now() - timedelta(days=15)).count()
+
+    risco = "Baixo"
+    if ausencias > 3:
+        risco = "Alto"
+    elif ausencias > 1:
+        risco = "Moderado"
+
+    return render_template("aluno_risco.html", aluno=cliente, risco=risco)

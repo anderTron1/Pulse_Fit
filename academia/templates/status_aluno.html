@@ -25,12 +25,12 @@
                     <td>{{ aluno.id }}</td>
                     <td>{{ aluno.nome }}</td>
                     <td>
-                        <a class="btn btn-outline-info btn-sm" href="">
+                        <a class="btn btn-outline-info btn-sm" href="{{ url_for('page_aluno_frequencia', cliente_id=aluno.id) }}">
                             Ver Frequência
                         </a>
                     </td>
                     <td>
-                        <a class="btn btn-outline-warning btn-sm" href="">
+                        <a class="btn btn-outline-warning btn-sm" href="{{ url_for('page_aluno_risco_churn', cliente_id=aluno.id)}}">
                             Ver Risco
                         </a>
                     </td>

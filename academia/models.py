@@ -47,11 +47,11 @@ class Checkin(db.Model):
     dt_checkout = db.Column(db.DateTime, nullable=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey("cliente.id",  name="fk_checkin_cliente"))
     
-    def verificar_dia(self):
-        if self.dt_checkin > self.dt_checkout:
+    def verificar_dia(dt_checkin, dt_checkout):
+        if dt_checkin > dt_checkout:
             flash("Data e hora de check-in não pode ser maior que a data e hora de check-out.", "danger")
             return False
-        elif self.dt_checkin > datetime.utcnow() or self.dt_checkout > datetime.utcnow():
+        elif dt_checkin > datetime.utcnow() or dt_checkout > datetime.utcnow():
             flash("Data de check-in e check-out não podem ser maiores que a data atual.", "danger")
             return False
         else:

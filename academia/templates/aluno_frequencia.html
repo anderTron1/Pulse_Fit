@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Histórico de Frequência{% endblock %}
+
+{% block conteudo %}
+<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
+
+    <div class="container mt-4">
+        <h3>Histórico de Frequência - {{ aluno.nome }}</h3>
+        <table class="table table-dark table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Data de Check-in</th>
+                    <th>Data de Check-out</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for freq in checkins %}
+                <tr>
+                    <td>{{ freq.dt_checkin.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ freq.dt_checkout.strftime('%d/%m/%Y %H:%M') if freq.dt_checkout else '---' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+{% endblock %}
