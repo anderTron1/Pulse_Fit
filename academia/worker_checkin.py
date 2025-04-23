@@ -3,10 +3,10 @@ import json
 from datetime import datetime
 from academia import app, db
 from academia.models import Checkin, Cliente
-import multiprocessing
+
 
 dt_format = "%Y-%m-%d %H:%M:%S"
-def start_worker():
+def start_worker_checkin():
     with app.app_context():
         def callback(ch, method, properties, body):
             data = json.loads(body)
@@ -31,9 +31,9 @@ def start_worker():
 
         print("[WORKER] Aguardando mensagens de checkin-in...")
         canal.start_consuming()
-
-def iniciar_worker():
+'''def iniciar_worker():
     worker_process = multiprocessing.Process(target=start_worker)
     worker_process.daemon= True
     worker_process.start()
     print("Executando aqui...")
+'''

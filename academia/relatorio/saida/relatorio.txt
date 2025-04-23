@@ -1,0 +1,27 @@
+Relatório de Frequência
+Data do relatório: 22/04/2025
+
+Aluno	Data	Horário de Check-in	Horário de Check-out
+andre	15:00	15:00	15:00
+andre	17:30	17:30	17:30
+andre	10:00	10:00	10:00
+andre	13:00	13:00	13:00
+andre	10:35	10:35	10:35
+andre	12:00	12:00	12:00
+andre	15:00	15:00	15:00
+andre	18:00	18:00	18:00
+andre	08:00	08:00	08:00
+andre	22:00	22:00	22:30
+andre	11:00	11:00	16:00
+andre	15:00	15:00	15:00
+andre	15:00	15:00	15:00
+andre	11:00	11:00	02:22
+andre	06:00	06:00	11:22
+andre	09:00	09:00	09:00
+andre	11:00	11:00	05:02
+andre	11:00	11:00	11:00
+andre	11:22	11:22	22:11
+andre	11:30	11:30	11:30
+andre	12:30	12:30	12:30
+andre	11:11	11:11	18:22
+andre	06:11	06:11	11:20

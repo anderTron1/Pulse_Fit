@@ -216,7 +216,6 @@ def page_status_aluno():
 def page_aluno_frequencia(cliente_id):
     cliente = Cliente.query.get_or_404(cliente_id)
     checkins = Checkin.query.filter_by(cliente_id=cliente.id).order_by(Checkin.dt_checkin.desc()).all()
-    print("Check-ins do cliente:", checkins)
     return render_template("aluno_frequencia.html", aluno=cliente, checkins=checkins)
 
 @app.route('/status_aluno/<int:cliente_id>/risco-churn')
