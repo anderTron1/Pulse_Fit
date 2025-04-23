@@ -1,1 +1,3 @@
 venv/
+inserts_checkins.sql
+inserts_clientes.sql
