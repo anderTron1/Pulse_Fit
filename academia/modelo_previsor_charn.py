@@ -10,8 +10,82 @@ import warnings
 from sqlalchemy import func, distinct
 import joblib
 
-# Subconsulta com os campos agregados por cliente e semana
+from sqlalchemy import func, distinct, cast, String
+import pandas as pd
+from datetime import datetime, date
+from sqlalchemy import Integer
+
+
 def executar_subconsulta(id_cliente=None):
+    if id_cliente:
+        print(f"[X] - Extraindo dados do cliente {id_cliente}...")
+    else:
+        print("[X] - Extraindo dados para treinamento...")
+
+    # Em SQLite, não temos 'to_char' ou 'MM-IW', então usamos substrings de data para obter 'ano-semana'
+    mes_semana_expr = func.strftime('%Y-%W', Checkin.dt_checkin)
+
+    # Em SQLite usamos julianday para fazer cálculo de diferença em dias
+    dias_desde_ultimo_expr = func.cast(func.julianday(func.current_date()) - func.julianday(func.max(Checkin.dt_checkin)), Integer)
+
+    # Duração média em horas usando julianday
+    duracao_expr = func.avg((func.julianday(Checkin.dt_checkout) - func.julianday(Checkin.dt_checkin)) * 24)
+
+    query = (
+        db.session.query(
+            Cliente.id.label("id"),
+            Cliente.nome.label("nome"),
+            func.count(distinct(func.date(Checkin.dt_checkin))).label("dias_presentes"),
+            func.max(Checkin.dt_checkin).label("ultimo_checkin"),
+            mes_semana_expr.label("mes_semana"),
+            (func.julianday(func.current_date()) - func.julianday(func.max(Checkin.dt_checkin))).label("dias_desde_ultimo_checkin"),
+            duracao_expr.label("duracao_media_horas"),
+            Plano.id.label("id_plano"),
+            Plano.plano.label("nome_plano")
+        )
+        .join(Plano, Cliente.plano == Plano.id)
+        .join(Checkin, Checkin.cliente_id == Cliente.id)
+    )
+
+    if id_cliente is not None:
+        query = query.filter(Cliente.id == id_cliente)
+
+    query = query.group_by(
+        Cliente.id, 
+        Cliente.nome, 
+        mes_semana_expr,
+        Plano.id,
+        Plano.plano
+    )
+    
+    subquery = query.subquery()
+
+    resultado = db.session.query(
+        subquery.c.mes_semana,
+        subquery.c.dias_presentes,
+        subquery.c.dias_desde_ultimo_checkin,
+        subquery.c.duracao_media_horas,
+        subquery.c.nome_plano
+    ).all()
+
+    df = pd.DataFrame(resultado, columns=[
+        "mes_semana",
+        "dias_presentes", 
+        "dias_desde_ultimo_checkin", 
+        "duracao_media_horas", 
+        "nome_plano"
+    ])
+
+    df['cancelou'] = df.apply(
+        lambda row: 1 if row['dias_desde_ultimo_checkin'] > 30 and row['dias_presentes'] < 4 else 0, 
+        axis=1
+    )
+    
+    return df
+
+
+# Subconsulta com os campos agregados por cliente e semana
+def executar_subconsulta1(id_cliente=None):
     if id_cliente:
         print(f"[X] - Extraindo dados do cliente {id_cliente}...")
     else:
@@ -70,6 +144,8 @@ def executar_subconsulta(id_cliente=None):
     )
     
     return df 
+
+
 
 def transformar_dados(df):      
     print("[X] - Transformando dados categoricos...")

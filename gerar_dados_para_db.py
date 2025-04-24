@@ -4,9 +4,9 @@ import random
 from tqdm import tqdm
 from sqlalchemy import create_engine, text
 
-#engine = create_engine('sqlite:///instance/pulsefit.db')
+engine = create_engine('sqlite:///instance/pulsefit.db')
 
-engine = create_engine('postgresql://postgres:123@localhost:5432/pulsefit')
+#engine = create_engine('postgresql://postgres:123@localhost:5432/pulsefit')
 
 fake = Faker('pt_BR')
 

@@ -9,6 +9,8 @@ from datetime import datetime
 import json 
 import pika
 
+from academia import HORA_ENVIO_RELATORIO, MINUTOS_ENVIO_RELATORIO
+
 def iniciar_worker_relatorio(queue):
     def callback(ch, method, properties, body):
         with app.app_context():  # Garante que o contexto Flask esteja ativo
@@ -46,7 +48,7 @@ def iniciar_agendador_com_sinal(queue):
             queue.put("iniciar_worker_relatorio")
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(agendar_relatorio, 'cron', hour=20, minute=51)  
+    scheduler.add_job(agendar_relatorio, 'cron', hour=HORA_ENVIO_RELATORIO, minute=MINUTOS_ENVIO_RELATORIO)  
     print("[AGENDADOR] Iniciado. Relatórios serão enviados às 16:18.")
     scheduler.start()
  
