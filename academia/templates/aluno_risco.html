@@ -3,12 +3,41 @@
 {% block titulo %}Risco de Churn{% endblock %}
 
 {% block conteudo %}
-<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white;">
+<body style="background: linear-gradient(to right, #000000, #1f1f1f); font-family: 'Segoe UI', sans-serif; color: white; min-height: 100vh;">
 
-    <div class="container mt-4">
-        <h3>Risco de Desistência - {{ aluno.nome }}</h3>
-        <div class="alert alert-info mt-3">
-            Probabilidade de Desistência: <strong>{{ risco }}</strong>
+    <div class="container mt-2">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Risco de Desistência</h2>
+        </div>
+
+        <div class="alert alert-info shadow-sm">
+            <h4 class="alert-heading">Aluno: {{ cliente.nome }} {{cliente.sobrenome }}</h4>
+            <h5 class="mb-3">Probabilidade de Desistência: {{ risco }}</h5>
+
+            <div class="table-responsive mt-4">
+                <table class="table table-dark table-hover table-bordered align-middle text-center">
+                    <thead class="table-light text-dark">
+                        <tr>
+                            <th>Mês-Semana</th>
+                            <th>Dias Presentes</th>
+                            <th>Dias Desde o Último Check-in</th>
+                            <th>Duração Média (horas)</th>
+                            <th>Nome do Plano</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in df_cliente.itertuples(index=False): %}
+                        <tr>
+                            <td>{{ row.mes_semana }}</td>
+                            <td>{{ row.dias_presentes }}</td>
+                            <td>{{ row.dias_desde_ultimo_checkin }}</td>
+                            <td>{{ row.duracao_media_horas }}</td>
+                            <td>{{ row.nome_plano }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>

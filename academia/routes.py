@@ -5,6 +5,9 @@ from academia.forms import CadastroPlano, CadastroCliente, CadastroCheckin
 from academia.models import Plano, Cliente, Checkin
 from datetime import datetime, timedelta
 
+from academia.modelo_previsor_charn import carregar_modelo, previsao_proximos_dias, executar_subconsulta, transformar_dados
+
+
 import pika
 import json 
 
@@ -221,13 +224,25 @@ def page_aluno_frequencia(cliente_id):
 @app.route('/status_aluno/<int:cliente_id>/risco-churn')
 def page_aluno_risco_churn(cliente_id):
     cliente = Cliente.query.get_or_404(cliente_id)
+    checkin = Checkin.query.filter_by(cliente_id=cliente_id).all()
+    #ausencias = Checkin.query.filter_by(cliente_id=cliente.id).filter(Checkin.dt_checkin < datetime.now() - timedelta(days=15)).count()
 
-    ausencias = Checkin.query.filter_by(cliente_id=cliente.id).filter(Checkin.dt_checkin < datetime.now() - timedelta(days=15)).count()
+    #executar_novo_treino()
+    churn = 0
+    df_cliente = None
+    if checkin:
+        modelo = carregar_modelo()
+        df_cliente = executar_subconsulta(cliente_id)
+        df_cliente_transformado = df_cliente.drop(columns=["mes_semana"])
+        df_cliente_transformado, _ =  transformar_dados(df_cliente_transformado.copy())
+        cliente_dados = df_cliente_transformado.iloc[0, :4].values.reshape(1, -1) 
+        churn = previsao_proximos_dias(modelo, cliente_dados)
+    else:   
+        flash("Cliente sem registros de check-ins.", category="danger")
+        return redirect(url_for("page_status_aluno"))
 
     risco = "Baixo"
-    if ausencias > 3:
+    if churn == 1:
         risco = "Alto"
-    elif ausencias > 1:
-        risco = "Moderado"
 
-    return render_template("aluno_risco.html", aluno=cliente, risco=risco)
+    return render_template("aluno_risco.html",  risco=risco, df_cliente=df_cliente, cliente=cliente)

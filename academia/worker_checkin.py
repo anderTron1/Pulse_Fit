@@ -13,7 +13,7 @@ def start_worker_checkin():
 
             novo_checkin = Checkin(
                 cliente_id = data["cliente_id"],
-                dt_checkin = datetime.strptime(data["dt_checkout"], dt_format),
+                dt_checkin = datetime.strptime(data["dt_checkin"], dt_format),
                 dt_checkout = datetime.strptime(data["dt_checkout"], dt_format)
             )
             db.session.add(novo_checkin)

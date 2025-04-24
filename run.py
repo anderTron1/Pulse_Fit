@@ -4,7 +4,6 @@ from multiprocessing import freeze_support
 import pika 
 from academia.relatorio.agendador import iniciar_worker_relatorio, iniciar_agendador_com_sinal
 
-
 from multiprocessing import Process, Queue
 
 if __name__ == "__main__":
@@ -29,4 +28,6 @@ if __name__ == "__main__":
 
     #worker_process_checkin.join()
     #iniciar_worker()
+
     app.run(debug=True)
+

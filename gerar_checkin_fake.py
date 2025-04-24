@@ -23,7 +23,7 @@ def gerar_hora_aleatoria():
     minuto = random.randint(0, 59)  # Gerando minuto entre 0 e 59
     return f"{hora:02}:{minuto:02}"  # Retorna no formato HH:mm"
 
-while len(checkins_sql) < 500:
+while len(checkins_sql) < 2000:
     cliente_id = random.choice(clientes_ids)
     
     # Gerar data de check-in (vamos começar o check-in em um dia aleatório de uma semana)
