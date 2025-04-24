@@ -31,7 +31,7 @@
                             <td>{{ row.mes_semana }}</td>
                             <td>{{ row.dias_presentes }}</td>
                             <td>{{ row.dias_desde_ultimo_checkin }}</td>
-                            <td>{{ row.duracao_media_horas }}</td>
+                            <td>{{ "%.2f"|format(row.duracao_media_horas) }}</td>
                             <td>{{ row.nome_plano }}</td>
                         </tr>
                         {% endfor %}

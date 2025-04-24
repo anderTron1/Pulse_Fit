@@ -8,29 +8,26 @@ from academia.models import Cliente, Checkin, Plano
 import numpy as np
 import warnings
 from sqlalchemy import func, distinct
-
 import joblib
 
 # Subconsulta com os campos agregados por cliente e semana
-
 def executar_subconsulta(id_cliente=None):
     if id_cliente:
         print(f"[X] - Extraindo dados do cliente {id_cliente}...")
     else:
         print("[X] - Extraindo dados para treinamento...")
+
+    mes_format = 'MM-IW'
+    
     query = (
         db.session.query(
             Cliente.id.label("id"),
             Cliente.nome.label("nome"),
-            func.strftime('%m-%W', Checkin.dt_checkin).label("mes_semana"),
             func.count(distinct(func.date(Checkin.dt_checkin))).label("dias_presentes"),
             func.max(Checkin.dt_checkin).label("ultimo_checkin"),
-            func.round(
-                func.julianday(func.current_date()) - func.julianday(func.max(Checkin.dt_checkin))
-            ).label("dias_desde_ultimo_checkin"),
-            func.round(
-                func.avg((func.julianday(Checkin.dt_checkout) - func.julianday(Checkin.dt_checkin)) * 24), 2
-            ).label("duracao_media_horas"),
+            func.to_char(Checkin.dt_checkin, mes_format).label("mes_semana"),
+            func.date_part('day', func.current_date() - func.max(Checkin.dt_checkin)).label("dias_desde_ultimo_checkin"),
+            (func.avg(func.extract('epoch', Checkin.dt_checkout - Checkin.dt_checkin) / 3600)).label("duracao_media_horas"),
             Plano.id.label("id_plano"),
             Plano.plano.label("nome_plano")
         )
@@ -42,7 +39,13 @@ def executar_subconsulta(id_cliente=None):
     if id_cliente is not None:
         query = query.filter(Cliente.id == id_cliente)
 
-    query = query.group_by(Cliente.id, Cliente.nome, func.strftime('%m-%W', Checkin.dt_checkin))
+    query = query.group_by(
+        Cliente.id, 
+        Cliente.nome, 
+        func.to_char(Checkin.dt_checkin, mes_format),
+        Plano.id,
+        Plano.plano
+    )
     
     subquery = query.subquery()
 
@@ -65,10 +68,10 @@ def executar_subconsulta(id_cliente=None):
         lambda row: 1 if row['dias_desde_ultimo_checkin'] > 30 and row['dias_presentes'] < 4 else 0, 
         axis=1
     )
+    
     return df 
 
 def transformar_dados(df):      
-    # Transformar os dados categóricos em numéricos
     print("[X] - Transformando dados categoricos...")
     label_encoder = LabelEncoder()
     df['nome_plano'] = label_encoder.fit_transform(df['nome_plano'])
@@ -79,7 +82,6 @@ def divisao_dos_dados(df):
     x = df[['dias_presentes', 'dias_desde_ultimo_checkin', 'duracao_media_horas', 'nome_plano']]
     y = df['cancelou']
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-
     return x_train, x_test, y_train, y_test
 
 def treinar_modelo(x_train, y_train):
@@ -101,7 +103,7 @@ def previsao(modelo, x_test):
 def previsao_proximos_dias(modelo, cliente):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        previsoes = modelo.predict_proba(cliente)#[0][1]
+        previsoes = modelo.predict_proba(cliente)
         return int(np.argmax(previsoes))
 
 def executar_novo_treino():
@@ -117,13 +119,11 @@ def executar_novo_treino():
     joblib.dump(modelo, 'modelo_treinado.pkl')
 
 def carregar_modelo():
-    # verificar se o modelo existe 
     try:
         modelo_carregado = joblib.load('modelo_treinado.pkl')
         print("[X] - Modelo carregado com sucesso.")
     except FileNotFoundError:
         print("[X] - Modelo não encontrado. Treinando novo modelo...")
         executar_novo_treino()
-        # Carregar o modelo novamente após o treinamento
         modelo_carregado = joblib.load('modelo_treinado.pkl')
     return modelo_carregado

@@ -11,7 +11,6 @@ from academia.modelo_previsor_charn import carregar_modelo, previsao_proximos_di
 import pika
 import json 
 
-
 @app.route("/")
 def page_home():
     return render_template("home.html")
@@ -245,4 +244,4 @@ def page_aluno_risco_churn(cliente_id):
     if churn == 1:
         risco = "Alto"
 
-    return render_template("aluno_risco.html",  risco=risco, df_cliente=df_cliente, cliente=cliente)
+    return render_template("aluno_risco.html",  risco=risco, df_cliente=df_cliente.tail(1), cliente=cliente)
