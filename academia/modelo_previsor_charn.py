@@ -16,7 +16,7 @@ from datetime import datetime, date
 from sqlalchemy import Integer
 
 
-def executar_subconsulta(id_cliente=None):
+def executar_subconsulta_SQLITE(id_cliente=None):
     if id_cliente:
         print(f"[X] - Extraindo dados do cliente {id_cliente}...")
     else:
@@ -85,7 +85,7 @@ def executar_subconsulta(id_cliente=None):
 
 
 # Subconsulta com os campos agregados por cliente e semana
-def executar_subconsulta1(id_cliente=None):
+def executar_subconsulta(id_cliente=None):
     if id_cliente:
         print(f"[X] - Extraindo dados do cliente {id_cliente}...")
     else:

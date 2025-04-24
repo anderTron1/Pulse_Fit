@@ -9,7 +9,7 @@ from datetime import datetime
 import json 
 import pika
 
-from academia import HORA_ENVIO_RELATORIO, MINUTOS_ENVIO_RELATORIO
+from academia import HORA_ENVIO_RELATORIO, MINUTOS_ENVIO_RELATORIO, EMAIL_PARA_TESTE
 
 def iniciar_worker_relatorio(queue):
     def callback(ch, method, properties, body):
@@ -20,7 +20,7 @@ def iniciar_worker_relatorio(queue):
                 checkins = dados['checkins']
                 hoje = datetime.today().date()
                 gerar_pdf_relatorio(checkins, hoje)
-                enviar_relatorio_por_email('andreluizpires1507@gmail.com', checkins, hoje)
+                enviar_relatorio_por_email(EMAIL_PARA_TESTE, checkins, hoje)
                 print("[WORKER RELATÓRIO] Relatório gerado e enviado com sucesso.")
                 ch.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as e:

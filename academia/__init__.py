@@ -5,8 +5,8 @@ import os
 from flask_mail import Mail, Message
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///pulsefit.db"
-#app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:123@localhost:5432/pulsefit"
+#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///pulsefit.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:123@localhost:5432/pulsefit"
 app.config["SECRET_KEY"] = "41eab096907f908050d3345f"
 
 app.config['MAIL_SERVER']='smtp.elasticemail.com'
@@ -17,8 +17,10 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
+#AQUI VAI AS CONFIGURAÇÕES PARA ENVIO DE EMAIL
 HORA_ENVIO_RELATORIO = 23
 MINUTOS_ENVIO_RELATORIO = 55
+EMAIL_PARA_TESTE = 'andreluizpires1507@gmail.com'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
