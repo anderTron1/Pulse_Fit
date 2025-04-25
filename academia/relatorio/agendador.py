@@ -1,6 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
-from academia import app
+from academia import app, url_CloudAMQP
 from academia.relatorio.relatorio_alunos import envia_relatorio_para_fila
 from academia.relatorio.utils import gerar_pdf_relatorio, enviar_relatorio_por_email
 
@@ -26,7 +26,7 @@ def iniciar_worker_relatorio(queue):
             except Exception as e:
                 print(f"[WORKER RELATÓRIO] Erro ao processar a mensagem: {e}")
             queue.put("iniciar_worker_relatorio")
-    conexao = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+    conexao = pika.BlockingConnection(pika.URLParameters(url_CloudAMQP))
     canal = conexao.channel()
     canal.queue_declare(queue="relatorio_diario", durable=True)
     canal.basic_qos(prefetch_count=1)
