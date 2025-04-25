@@ -1,7 +1,7 @@
 import pika 
 import json 
 from datetime import datetime
-from academia import app, db
+from academia import app, db, url_CloudAMQP
 from academia.models import Checkin, Cliente
 
 
@@ -23,7 +23,7 @@ def start_worker_checkin():
 
             ch.basic_ack(delivery_tag=method.delivery_tag)
         
-        conexao = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+        conexao = pika.BlockingConnection(pika.URLParameters(url_CloudAMQP))
         canal = conexao.channel()
         canal.queue_declare(queue="fila_checkin", durable=True)
         canal.basic_qos(prefetch_count=1)

@@ -16,14 +16,14 @@ from datetime import datetime, date
 from sqlalchemy import Integer
 
 
-def executar_subconsulta_SQLITE(id_cliente=None):
+def executar_subconsulta(id_cliente=None):
     if id_cliente:
         print(f"[X] - Extraindo dados do cliente {id_cliente}...")
     else:
         print("[X] - Extraindo dados para treinamento...")
 
     # Em SQLite, não temos 'to_char' ou 'MM-IW', então usamos substrings de data para obter 'ano-semana'
-    mes_semana_expr = func.strftime('%Y-%W', Checkin.dt_checkin)
+    mes_semana_expr = func.strftime('%m-%W', Checkin.dt_checkin)
 
     # Em SQLite usamos julianday para fazer cálculo de diferença em dias
     dias_desde_ultimo_expr = func.cast(func.julianday(func.current_date()) - func.julianday(func.max(Checkin.dt_checkin)), Integer)
@@ -85,7 +85,7 @@ def executar_subconsulta_SQLITE(id_cliente=None):
 
 
 # Subconsulta com os campos agregados por cliente e semana
-def executar_subconsulta(id_cliente=None):
+def executar_subconsulta1(id_cliente=None):
     if id_cliente:
         print(f"[X] - Extraindo dados do cliente {id_cliente}...")
     else:

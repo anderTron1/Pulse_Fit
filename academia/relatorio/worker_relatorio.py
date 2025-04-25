@@ -1,7 +1,7 @@
 import pika
 import json
 from academia.relatorio.utils import gerar_pdf_relatorio, enviar_relatorio_por_email
-from academia import app
+from academia import app, url_CloudAMQP
 from datetime import datetime
 
 def callback(ch, method, properties, body):
@@ -12,7 +12,7 @@ def callback(ch, method, properties, body):
     enviar_relatorio_por_email('andreluizpires1507@gmail.com', checkins, hoje)
 
 def iniciar_worker_relatorio():
-    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    connection = pika.BlockingConnection(pika.URLParameters(url_CloudAMQP))
     channel = connection.channel()
     channel.queue_declare(queue='relatorio_diario', durable=True)
     channel.basic_qos(prefetch_count=1)

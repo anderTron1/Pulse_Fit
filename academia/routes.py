@@ -1,4 +1,4 @@
-from academia import app
+from academia import app, url_CloudAMQP
 from flask import render_template, flash, request, redirect, url_for
 from academia import db 
 from academia.forms import CadastroPlano, CadastroCliente, CadastroCheckin
@@ -35,7 +35,7 @@ def page_checkin():
                     }
 
                     # Enviar mensagem para o RabbitMQ
-                    conexao = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
+                    conexao = pika.BlockingConnection(pika.URLParameters(url_CloudAMQP))
                     canal = conexao.channel()
                     canal.queue_declare(queue="fila_checkin", durable=True)
                     canal.basic_publish(
